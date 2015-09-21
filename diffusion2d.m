@@ -30,22 +30,6 @@ for i=2:times
     u(i,:,:) = real(ifft2(uf));
 end
 
-gifka = 'diffusion2d.gif';
-clf;
-pic = surf(X,Y,squeeze(u(1,:,:)),'EraseMode','background'),axis([0 2*pi 0 2*pi umin umax]);
-for i=1:times    
-    %surf(X,Y,squeeze(u(i,:,:)),'EraseMode','background'),axis([0 2*pi 0 2*pi umin umax]), drawnow;
-    set(pic,'zdata',squeeze(u(i,:,:))), drawnow;
-    M(i) = getframe;
-    frame = getframe;
-    im = frame2im(frame);
-    [imind,cm] = rgb2ind(im,256);
-    if i == 1;
-        imwrite(imind,cm,gifka,'gif','Loopcount',inf);
-    else
-        imwrite(imind,cm,gifka,'gif','WriteMode','append','DelayTime',.1);
-    end
-end
-
+createGif('diffusion2d.gif',X,Y,u,times,1,[0 2*pi 0 2*pi umin umax]);
 
 

@@ -21,12 +21,13 @@ u = zeros(times,n,n);  % stores velocity profile for every time steps
 u(1,:,:) = u0;
 
 uf = fft2(u0);
-uft0 = fft2(ut0);
+uft = fft2(ut0);
 
 
 for i=2:times
-    uft0 = uft0 - a*h*ks.*uf;
-    uf = uf + h*uft0;
+    uft_new = uft - a*h*ks.*uf;
+    uf = uf + 0.5*h*(uft+uft_new);
+    uft = uft_new;
     
     % == fixed boundary conditions 
 %     u0 = real(ifft2(uf));
@@ -38,22 +39,7 @@ for i=2:times
     u(i,:,:) = real(ifft2(uf));
 end
 
-% save results to gif file
-gifka = 'wave2d_zero_bc.gif';
-clf;
-pic = surf(X,Y,squeeze(u(1,:,:))),axis([0 2*pi 0 2*pi -.2 .2]);
-for i=1:10:times 
-    set(pic,'zdata',squeeze(u(i,:,:))), drawnow;
-    M(i) = getframe;
-    frame = getframe;
-    im = frame2im(frame);
-    [imind,cm] = rgb2ind(im,256);
-    if i == 1;
-        imwrite(imind,cm,gifka,'gif','Loopcount',inf);
-    else
-        imwrite(imind,cm,gifka,'gif','WriteMode','append','DelayTime',.1);
-    end
-end
+createGif('wave2d_periodic_bc.gif',X,Y,u,times,10,[0 2*pi 0 2*pi -.2 .2]);
 
 
 
